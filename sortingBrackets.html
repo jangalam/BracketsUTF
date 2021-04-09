@@ -3,18 +3,112 @@
  <meta charset = "utf-8">
  <meta name = "author" content = "Hui Cheng">
  <meta name = "creator" content = "sorting parenthesis/bracket">
-	 <title> display parenthesis by using regexp </title>
+	 <title> display parenthesis </title>
 	 <style type="text/css">
 	label{font-size: 200% ;}
-	</style>
+	.highlight {
+        background-color:green; color:white; 
+	}
+	tr {
+        border-bottom: 1px solid black;
+	}
+	th {
+        height: 100px;
+	}
+	td {
+        text-align: center; 
+        height:100px;
+        inline-size: 100px; 
+        overflow-wrap: break-word;
+        border-bottom: 1px solid black;
+	}
+	
+	label[for=element-toggle] {
+            cursor: pointer;
+            color: red;
+            }
+   #element-toggle {
+        display: none;
+    }
+    
+    
+    
+    #element-toggle:not(:checked) ~ #bracketTable tr {
+        display: block;
+        float: left;
+        margin: auto left auto;
+    }
+
+#element-toggle:not(:checked) ~ #bracketTable th,
+#element-toggle:not(:checked) ~ #bracketTable td {
+  display: block;
+}
+</style>
 
  </head>
 
  <body>
- <div id = 'log1'> The UTF - 8 codes for left parenthesis are:  < br />  </div>
-<div id = 'log2'> The UTF - 8 codes for right parenthesis are:  <br />  </div>
+ <div id = 'log0'> Click on the bracket symbol  to view UTF-16 code: <label id = "labelHEX"> \uXXXX </label> <br>
+<!-- pure css toggle method learned from https://siongui.github.io/2017/04/16/css-only-transpose-html-table/ -->
+    <label for="element-toggle">Transpose the View of Bidirectional Bracket Pairs</label>
+    <input id="element-toggle" type="checkbox" /> <br><br>
+
+<table id='bracketTable'>
+
+<tbody>
+    <tr class='highlight'>
+        <th>释Annotation</th>
+        <th>左Left</th>
+        <th>右Right</th>
+    </tr>
+
+    <!-- tr>
+        <td>parenthesis</td>
+        <td>(</td>
+        <td>)</td>
+    </tr>
+     <tr>
+        <td>square bracket</td>
+        <td>[</td>
+        <td>]</td>
+    </tr -->
+</tbody>
+</table>
+</div>
+
 
 <script type = "module">
+function fillRows(contentID,bracketData){
+    const contentRef = document.getElementById(contentID);
+    bracketData.forEach(item => {
+        const newRow = contentRef.insertRow(-1);
+        //add annotation
+        const newCell0 = newRow.insertCell(0);
+        newCell0.setAttribute("data-utf16code",`\\u${item[0]} \\u${item[1]}`);
+        const newText0 = document.createTextNode(item[2].toLowerCase());
+        newCell0.appendChild(newText0);
+        //add left bracket
+        const newCell1 = newRow.insertCell(1);
+        newCell1.setAttribute("data-utf16code",`\\u${item[0]}`);
+        newCell1.innerHTML = "&#x" + item[0] + ";" ;
+        
+        //add right bracket
+        const newCell2 = newRow.insertCell(2);
+        newCell2.setAttribute("data-utf16code",`\\u${item[1]}`);
+        newCell2.innerHTML = "&#x" + item[1] + ";" ;
+    });
+    
+}
+
+function clickHandler(event){
+    if (event.target.dataset.utf16code){
+        //access custom data attribute https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes
+       document.getElementById("labelHEX").innerHTML = event.target.dataset.utf16code;
+        event.preventDefault();
+    }
+}
+document.getElementById("bracketTable").addEventListener('click', clickHandler);
+
 
 var symbolBrackets = "0028; 0029; o # LEFT PARENTHESIS \n0029; 0028; c # RIGHT PARENTHESIS \n005B; 005D; o # LEFT SQUARE BRACKET \n005D; 005B; c # RIGHT SQUARE BRACKET \n007B; 007D; o # LEFT CURLY BRACKET \n007D; 007B; c # RIGHT CURLY BRACKET \n0F3A; 0F3B; o # TIBETAN MARK GUG RTAGS GYON \n0F3B; 0F3A; c # TIBETAN MARK GUG RTAGS GYAS \n0F3C; 0F3D; o # TIBETAN MARK ANG KHANG GYON \n0F3D; 0F3C; c # TIBETAN MARK ANG KHANG GYAS \n169B; 169C; o # OGHAM FEATHER MARK \n169C; 169B; c # OGHAM REVERSED FEATHER MARK \n2045; 2046; o # LEFT SQUARE BRACKET WITH QUILL \n2046; 2045; c # RIGHT SQUARE BRACKET WITH QUILL \n207D; 207E; o # SUPERSCRIPT LEFT PARENTHESIS \n207E; 207D; c # SUPERSCRIPT RIGHT PARENTHESIS \n208D; 208E; o # SUBSCRIPT LEFT PARENTHESIS \n208E; 208D; c # SUBSCRIPT RIGHT PARENTHESIS \n2308; 2309; o # LEFT CEILING \n2309; 2308; c # RIGHT CEILING \n230A; 230B; o # LEFT FLOOR \n230B; 230A; c # RIGHT FLOOR \n2329; 232A; o # LEFT-POINTING ANGLE BRACKET \n232A; 2329; c # RIGHT-POINTING ANGLE BRACKET \n2768; 2769; o # MEDIUM LEFT PARENTHESIS ORNAMENT \n2769; 2768; c # MEDIUM RIGHT PARENTHESIS ORNAMENT \n276A; 276B; o # MEDIUM FLATTENED LEFT PARENTHESIS ORNAMENT \n276B; 276A; c # MEDIUM FLATTENED RIGHT PARENTHESIS ORNAMENT \n276C; 276D; o # MEDIUM LEFT-POINTING ANGLE BRACKET ORNAMENT \n276D; 276C; c # MEDIUM RIGHT-POINTING ANGLE BRACKET ORNAMENT \n276E; 276F; o # HEAVY LEFT-POINTING ANGLE QUOTATION MARK ORNAMENT \n276F; 276E; c # HEAVY RIGHT-POINTING ANGLE QUOTATION MARK ORNAMENT \n2770; 2771; o # HEAVY LEFT-POINTING ANGLE BRACKET ORNAMENT \n2771; 2770; c # HEAVY RIGHT-POINTING ANGLE BRACKET ORNAMENT \n2772; 2773; o # LIGHT LEFT TORTOISE SHELL BRACKET ORNAMENT \n2773; 2772; c # LIGHT RIGHT TORTOISE SHELL BRACKET ORNAMENT \n2774; 2775; o # MEDIUM LEFT CURLY BRACKET ORNAMENT \n2775; 2774; c # MEDIUM RIGHT CURLY BRACKET ORNAMENT \n27C5; 27C6; o # LEFT S-SHAPED BAG DELIMITER \n27C6; 27C5; c # RIGHT S-SHAPED BAG DELIMITER \n27E6; 27E7; o # MATHEMATICAL LEFT WHITE SQUARE BRACKET \n27E7; 27E6; c # MATHEMATICAL RIGHT WHITE SQUARE BRACKET \n27E8; 27E9; o # MATHEMATICAL LEFT ANGLE BRACKET \n27E9; 27E8; c # MATHEMATICAL RIGHT ANGLE BRACKET \n27EA; 27EB; o # MATHEMATICAL LEFT DOUBLE ANGLE BRACKET \n27EB; 27EA; c # MATHEMATICAL RIGHT DOUBLE ANGLE BRACKET \n27EC; 27ED; o # MATHEMATICAL LEFT WHITE TORTOISE SHELL BRACKET \n27ED; 27EC; c # MATHEMATICAL RIGHT WHITE TORTOISE SHELL BRACKET \n27EE; 27EF; o # MATHEMATICAL LEFT FLATTENED PARENTHESIS \n27EF; 27EE; c # MATHEMATICAL RIGHT FLATTENED PARENTHESIS \n2983; 2984; o # LEFT WHITE CURLY BRACKET \n2984; 2983; c # RIGHT WHITE CURLY BRACKET \n2985; 2986; o # LEFT WHITE PARENTHESIS \n2986; 2985; c # RIGHT WHITE PARENTHESIS \n2987; 2988; o # Z NOTATION LEFT IMAGE BRACKET \n2988; 2987; c # Z NOTATION RIGHT IMAGE BRACKET \n2989; 298A; o # Z NOTATION LEFT BINDING BRACKET \n298A; 2989; c # Z NOTATION RIGHT BINDING BRACKET \n298B; 298C; o # LEFT SQUARE BRACKET WITH UNDERBAR \n298C; 298B; c # RIGHT SQUARE BRACKET WITH UNDERBAR \n298D; 2990; o # LEFT SQUARE BRACKET WITH TICK IN TOP CORNER \n298E; 298F; c # RIGHT SQUARE BRACKET WITH TICK IN BOTTOM CORNER \n298F; 298E; o # LEFT SQUARE BRACKET WITH TICK IN BOTTOM CORNER \n2990; 298D; c # RIGHT SQUARE BRACKET WITH TICK IN TOP CORNER \n2991; 2992; o # LEFT ANGLE BRACKET WITH DOT \n2992; 2991; c # RIGHT ANGLE BRACKET WITH DOT \n2993; 2994; o # LEFT ARC LESS-THAN BRACKET \n2994; 2993; c # RIGHT ARC GREATER-THAN BRACKET \n2995; 2996; o # DOUBLE LEFT ARC GREATER-THAN BRACKET \n2996; 2995; c # DOUBLE RIGHT ARC LESS-THAN BRACKET \n2997; 2998; o # LEFT BLACK TORTOISE SHELL BRACKET \n2998; 2997; c # RIGHT BLACK TORTOISE SHELL BRACKET \n29D8; 29D9; o # LEFT WIGGLY FENCE \n29D9; 29D8; c # RIGHT WIGGLY FENCE \n29DA; 29DB; o # LEFT DOUBLE WIGGLY FENCE \n29DB; 29DA; c # RIGHT DOUBLE WIGGLY FENCE \n29FC; 29FD; o # LEFT-POINTING CURVED ANGLE BRACKET \n29FD; 29FC; c # RIGHT-POINTING CURVED ANGLE BRACKET \n2E22; 2E23; o # TOP LEFT HALF BRACKET \n2E23; 2E22; c # TOP RIGHT HALF BRACKET \n2E24; 2E25; o # BOTTOM LEFT HALF BRACKET \n2E25; 2E24; c # BOTTOM RIGHT HALF BRACKET \n2E26; 2E27; o # LEFT SIDEWAYS U BRACKET \n2E27; 2E26; c # RIGHT SIDEWAYS U BRACKET \n2E28; 2E29; o # LEFT DOUBLE PARENTHESIS \n2E29; 2E28; c # RIGHT DOUBLE PARENTHESIS \n3008; 3009; o # LEFT ANGLE BRACKET \n3009; 3008; c # RIGHT ANGLE BRACKET \n300A; 300B; o # LEFT DOUBLE ANGLE BRACKET \n300B; 300A; c # RIGHT DOUBLE ANGLE BRACKET \n300C; 300D; o # LEFT CORNER BRACKET \n300D; 300C; c # RIGHT CORNER BRACKET \n300E; 300F; o # LEFT WHITE CORNER BRACKET \n300F; 300E; c # RIGHT WHITE CORNER BRACKET \n3010; 3011; o # LEFT BLACK LENTICULAR BRACKET \n3011; 3010; c # RIGHT BLACK LENTICULAR BRACKET \n3014; 3015; o # LEFT TORTOISE SHELL BRACKET \n3015; 3014; c # RIGHT TORTOISE SHELL BRACKET \n3016; 3017; o # LEFT WHITE LENTICULAR BRACKET \n3017; 3016; c # RIGHT WHITE LENTICULAR BRACKET \n3018; 3019; o # LEFT WHITE TORTOISE SHELL BRACKET \n3019; 3018; c # RIGHT WHITE TORTOISE SHELL BRACKET \n301A; 301B; o # LEFT WHITE SQUARE BRACKET \n301B; 301A; c # RIGHT WHITE SQUARE BRACKET \nFE59; FE5A; o # SMALL LEFT PARENTHESIS \nFE5A; FE59; c # SMALL RIGHT PARENTHESIS \nFE5B; FE5C; o # SMALL LEFT CURLY BRACKET \nFE5C; FE5B; c # SMALL RIGHT CURLY BRACKET \nFE5D; FE5E; o # SMALL LEFT TORTOISE SHELL BRACKET \nFE5E; FE5D; c # SMALL RIGHT TORTOISE SHELL BRACKET \nFF08; FF09; o # FULLWIDTH LEFT PARENTHESIS \nFF09; FF08; c # FULLWIDTH RIGHT PARENTHESIS \nFF3B; FF3D; o # FULLWIDTH LEFT SQUARE BRACKET \nFF3D; FF3B; c # FULLWIDTH RIGHT SQUARE BRACKET \nFF5B; FF5D; o # FULLWIDTH LEFT CURLY BRACKET \nFF5D; FF5B; c # FULLWIDTH RIGHT CURLY BRACKET \nFF5F; FF60; o # FULLWIDTH LEFT WHITE PARENTHESIS \nFF60; FF5F; c # FULLWIDTH RIGHT WHITE PARENTHESIS \nFF62; FF63; o # HALFWIDTH LEFT CORNER BRACKET \nFF63; FF62; c # HALFWIDTH RIGHT CORNER BRACKET ";
 
@@ -26,29 +120,10 @@ var resultArr = [];
 for (let i = 0; i < lines.length / 2; i++) {
 	let chosenRow = i * 2;
 	resultArr[i] = lines[chosenRow].split(/;\s+/).slice(0, 3);
+	resultArr[i][2] = resultArr[i][2].replace("o # ","").replace("LEFT ","");
 }
-let leftContainer = document.getElementById("log1");
-let rightContainer = document.getElementById("log2");
-let logleft = "";
-let logright = "";
-for (let arr of resultArr) {
 
-	let leftTag = document.createElement("label");
-	leftTag.setAttribute('title', arr[2]);
-	leftTag.innerHTML = "&#x" + arr[0];
-	leftContainer.appendChild(leftTag);
-
-	let rightTag = document.createElement("label");
-	rightTag.setAttribute('title', arr[2].replace(/o\s/, "c ").replace(/LEFT/, "RIGHT"));
-	rightTag.innerHTML = "&#x" + arr[1];
-	rightContainer.appendChild(rightTag);
-	logleft += "\\u" + arr[0];
-	logright += "\\u" + arr[1];
-}
-console.log("The UTF-8 codes for left parenthesis are: " + logleft);
-console.log("The UTF-8 codes for right parenthesis are: " + logright);
-
- </script>
-
- </body>
+fillRows('bracketTable',resultArr);
+</script>
+</body>
 </html>
